@@ -17,6 +17,7 @@ use STS\Metrics\Adapters\InfluxDB1Adapter;
 use STS\Metrics\Adapters\InfluxDB2Adapter;
 use STS\Metrics\Drivers\LogDriver;
 use STS\Metrics\Formatters\ArrayFormatter;
+use STS\Metrics\Formatters\Influx2Formatter;
 use STS\Metrics\Octane\Listeners\FlushMetrics;
 
 /**
