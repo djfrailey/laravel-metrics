@@ -19,6 +19,9 @@ return [
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'namespace' => env('CLOUDWATCH_NAMESPACE')
+        ],
+        'log' => [
+            'formatter' => env('IDB_LOG_FORMAT', 'influx2'),
         ]
     ],
 ];

@@ -4,6 +4,7 @@ namespace STS\Metrics\Drivers;
 
 use STS\Metrics\Metric;
 use Psr\Log\LoggerInterface;
+use STS\Metrics\Contracts\Formatter;
 
 /**
  * Class LogDriver
@@ -17,22 +18,23 @@ class LogDriver extends AbstractDriver
      */
     protected $logger;
 
-    public function __construct(LoggerInterface $logger)
+    /**
+     * @var Formatter
+     */
+    protected $formatter;
+
+    public function __construct(
+        LoggerInterface $logger,
+        Formatter $formatter
+    )
     {
         $this->logger = $logger;
+        $this->formatter = $formatter;
     }
 
     public function format(Metric $metric)
     {
-        return array_filter([
-            'name' => $metric->getName(),
-            'value' => $metric->getValue(),
-            'resolution' => $metric->getResolution(),
-            'unit' => $metric->getUnit(),
-            'tags' => $metric->getTags(),
-            'extra' => $metric->getExtra(),
-            'timestamp' => $metric->getTimestamp()
-        ]);
+        return $this->formatter->format($metric);
     }
 
     public function flush()
