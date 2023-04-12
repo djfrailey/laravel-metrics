@@ -13,6 +13,7 @@ use STS\Metrics\Drivers\InfluxDB2;
 use Illuminate\Foundation\Application as LaravelApplication;
 use InfluxDB2\Model\WritePrecision;
 use Laravel\Lumen\Application as LumenApplication;
+use Psr\Log\LoggerInterface;
 use STS\Metrics\Adapters\InfluxDB1Adapter;
 use STS\Metrics\Adapters\InfluxDB2Adapter;
 use STS\Metrics\Drivers\LogDriver;
@@ -231,7 +232,7 @@ class MetricsServiceProvider extends ServiceProvider
         };
 
         return new LogDriver(
-            $this->app->make(LogInterface::class),
+            $this->app->make(LoggerInterface::class),
             $formatter
         );
     }
