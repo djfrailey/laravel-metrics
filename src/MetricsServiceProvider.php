@@ -36,7 +36,7 @@ class MetricsServiceProvider extends ServiceProvider
 
         $this->app->alias(MetricsManager::class, 'metrics');
 
-        $this->singleton(LogDriver::class, function () {
+        $this->app->singleton(LogDriver::class, function () {
             return $this->createLogDriver($this->app['config']['metrics.backends.log']);
         });
 
