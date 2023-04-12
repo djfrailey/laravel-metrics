@@ -43,9 +43,15 @@ class LogDriver extends AbstractDriver
             return $this;
         }
 
-        $formatted = array_map([$this, 'format'], $this->getMetrics());
+        foreach ($this->getMetrics() as $metric) {
+            $formatted = $this->format($metric);
 
-        $this->logger->info("Metrics", $formatted);
+            if (is_null($formatted)) {
+                continue;
+            }
+
+            $this->logger->info($formatted);
+        }
 
         $this->metrics = [];
 

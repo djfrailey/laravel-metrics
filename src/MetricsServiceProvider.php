@@ -7,16 +7,15 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use InfluxDB\Client;
 use STS\Metrics\Contracts\ShouldReportMetric;
+use STS\Metrics\Contracts\Formatter;
 use STS\Metrics\Drivers\CloudWatch;
 use STS\Metrics\Drivers\InfluxDB;
 use STS\Metrics\Drivers\InfluxDB2;
 use Illuminate\Foundation\Application as LaravelApplication;
 use InfluxDB2\Model\WritePrecision;
 use Laravel\Lumen\Application as LumenApplication;
-use Psr\Log\LoggerInterface;
 use STS\Metrics\Adapters\InfluxDB1Adapter;
 use STS\Metrics\Adapters\InfluxDB2Adapter;
-use STS\Metrics\Drivers\LogDriver;
 use STS\Metrics\Formatters\ArrayFormatter;
 use STS\Metrics\Formatters\Influx2Formatter;
 use STS\Metrics\Octane\Listeners\FlushMetrics;
@@ -38,8 +37,12 @@ class MetricsServiceProvider extends ServiceProvider
 
         $this->app->alias(MetricsManager::class, 'metrics');
 
-        $this->app->singleton(LogDriver::class, function () {
-            return $this->createLogDriver($this->app['config']['metrics.backends.log']);
+        $this->app->bind(Formatter::class, function () {
+            $config = $this->app['config']['metrics.backends.log'];
+            return match ($config['formatter']) {
+                'influx2' => new Influx2Formatter(),
+                default => new ArrayFormatter(),
+            };
         });
 
         $this->app->singleton(InfluxDB::class, function () {
@@ -222,18 +225,5 @@ class MetricsServiceProvider extends ServiceProvider
         }
 
         return new CloudWatch(new CloudWatchClient($opts), $config['namespace']);
-    }
-    
-    protected function createLogDriver(array $config)
-    {
-        $formatter = match ($config['formatter']) {
-            'influx2' => $this->app->make(Influx2Formatter::class),
-            default => $this->app->make(ArrayFormatter::class),
-        };
-
-        return new LogDriver(
-            $this->app->make(LoggerInterface::class),
-            $formatter
-        );
     }
 }

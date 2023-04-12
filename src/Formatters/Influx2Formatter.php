@@ -11,9 +11,8 @@ class Influx2Formatter implements Formatter
     {
         return (new \InfluxDB2\Point(
             $metric->getName(),
-            $metric->getValue(),
             $metric->getTags(),
-            $metric->getExtra(),
+            array_merge(['value' => $metric->getValue()], $metric->getExtra()),
             $metric->getTimestamp()
         ))->toLineProtocol();
     }
